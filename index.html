@@ -1,29 +1,1605 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <title>AI for Beginners</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
+  <meta name="description" content="AI for Beginners - 微软AI入门课程">
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+  <style>
+    /* 全局科技+教育风格样式 */
+    :root {
+      --sidebar-width: 350px;
+      --primary-color: #2563eb;
+      --secondary-color: #7c3aed;
+      --accent-color: #06b6d4;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+    
+    /* 涂鸦风格的动态背景 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: 
+        /* 涂鸦风格的线条和点 */
+        radial-gradient(circle at 10% 20%, #2563eb 1px, transparent 1px),
+        radial-gradient(circle at 30% 40%, #7c3aed 1.5px, transparent 1.5px),
+        radial-gradient(circle at 50% 60%, #06b6d4 1px, transparent 1px),
+        radial-gradient(circle at 70% 30%, #2563eb 1.5px, transparent 1.5px),
+        radial-gradient(circle at 90% 70%, #7c3aed 1px, transparent 1px),
+        /* 涂鸦风格的波浪线 */
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 10px,
+          rgba(37, 99, 235, 0.1) 10px,
+          rgba(37, 99, 235, 0.1) 12px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 15px,
+          rgba(124, 58, 237, 0.08) 15px,
+          rgba(124, 58, 237, 0.08) 17px
+        );
+      background-size: 
+        200px 200px,
+        250px 250px,
+        180px 180px,
+        220px 220px,
+        190px 190px,
+        300px 300px,
+        350px 350px;
+      background-position: 
+        0 0,
+        100px 100px,
+        200px 200px,
+        300px 50px,
+        500px 300px,
+        0 0,
+        150px 150px;
+      animation: doodleBackground 20s ease-in-out infinite;
+    }
+    
+    @keyframes doodleBackground {
+      0%, 100% {
+        background-position: 
+          0 0,
+          100px 100px,
+          200px 200px,
+          300px 50px,
+          500px 300px,
+          0 0,
+          150px 150px;
+      }
+      50% {
+        background-position: 
+          50px 30px,
+          150px 130px,
+          250px 230px,
+          350px 80px,
+          550px 330px,
+          30px 20px,
+          180px 180px;
+      }
+    }
+    
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.02;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 20px,
+          rgba(6, 182, 212, 0.1) 20px,
+          rgba(6, 182, 212, 0.1) 22px
+        );
+      animation: doodleWave 15s linear infinite;
+    }
+    
+    @keyframes doodleWave {
+      from { background-position-x: 0; }
+      to { background-position-x: 100px; }
+    }
+    
+    /* 页面顶部装饰线 */
+    #app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    
+    /* 页面底部装饰线 */
+    #app::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-color), var(--secondary-color), var(--primary-color));
+      z-index: 1000;
+    }
+    
+    /* 可拖动调整的左侧目录栏 */
+    
+    .sidebar {
+      width: var(--sidebar-width) !important;
+      min-width: 300px !important;
+      max-width: 600px !important;
+      position: relative;
+      transition: width 0.2s ease;
+    }
+    
+    /* 拖动条 */
+    .sidebar-resizer {
+      position: absolute;
+      top: 0;
+      right: -2px;
+      width: 6px;
+      height: 100%;
+      background: transparent;
+      cursor: col-resize;
+      z-index: 1001;
+      transition: background 0.2s;
+      border-right: 2px solid transparent;
+    }
+    
+    .sidebar-resizer:hover {
+      background: rgba(0, 0, 0, 0.1);
+      border-right: 2px solid rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar-resizer.dragging {
+      background: rgba(0, 0, 0, 0.15);
+      border-right: 2px solid rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 标题样式 - 科技+教育风格 */
+    .sidebar .app-name {
+      padding: 18px 16px;
+      font-size: 1.5em;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: left;
+      letter-spacing: 0.5px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    
+    .sidebar .app-name::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-color), transparent);
+      border-radius: 2px;
+    }
+    .sidebar .sidebar-nav {
+      padding: 12px 16px 14px 16px;
+    }
+    /* 取消所有缩进，所有目录从最左侧开始，完全左对齐 */
+    .sidebar ul {
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+      list-style: none;
+      text-align: left;
+      display: block !important;  /* 确保默认展开 */
+    }
+    .sidebar li {
+      margin: 4px 0;
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+      text-align: left;
+    }
+    /* 确保所有链接完全左对齐 */
+    .sidebar a {
+      padding-left: 10px !important;
+      margin-left: 0 !important;
+    }
+    /* 子目录链接也要完全左对齐 */
+    .sidebar .sidebar-nav ul > li > ul > li > a {
+      padding-left: 10px !important;
+    }
+    .sidebar .sidebar-nav ul > li > ul > li > ul > li > a {
+      padding-left: 10px !important;
+    }
+    /* 侧边栏默认展开，但支持点击折叠 */
+    .sidebar .sidebar-nav ul > li > ul {
+      display: block !important;
+      max-height: none !important;
+      overflow: visible !important;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+    }
+    /* 折叠状态 */
+    .sidebar .sidebar-nav ul > li > ul.collapsed {
+      display: none !important;
+      max-height: 0 !important;
+      opacity: 0;
+      overflow: hidden;
+    }
+    
+    /* 首页目录默认展开（通过 JavaScript 控制首次访问时的折叠） */
+    
+    /* 显示侧边栏折叠/展开按钮 */
+    .sidebar .app-name-toggle,
+    .sidebar-toggle {
+      display: block !important;
+    }
+    .sidebar a {
+      padding: 8px 10px;
+      display: block;
+      word-wrap: break-word;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    /* 一级目录（最大目录）- 中文数字，科技风格，支持点击折叠 */
+    .sidebar .sidebar-nav ul > li > a {
+      font-weight: 700;
+      font-size: 1.1em;
+      color: var(--text-primary);
+      border-left-color: var(--primary-color);
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, transparent 100%);
+      margin-bottom: 8px;
+      border-left-width: 4px;
+      border-radius: 0 8px 8px 0;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      padding-left: 10px !important;
+    }
+    
+    /* 一级目录标题的折叠指示器 */
+    .sidebar .sidebar-nav ul > li > a::after {
+      content: '▼';
+      position: absolute;
+      right: 12px;
+      font-size: 0.7em;
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+    }
+    
+    /* 折叠状态下的指示器 */
+    .sidebar .sidebar-nav ul > li > a.collapsed::after {
+      transform: rotate(-90deg);
+    }
+    
+    /* 没有子目录的链接不显示折叠指示器（通过 JavaScript 动态控制） */
+    .sidebar .sidebar-nav ul > li > a.no-children::after {
+      display: none;
+    }
+    .sidebar .sidebar-nav ul > li > a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px 0 0 2px;
+    }
+    .sidebar .sidebar-nav ul > li > a:hover {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.1) 0%, transparent 100%);
+      color: var(--primary-color);
+      transform: translateX(2px);
+    }
+    /* 二级目录 - 阿拉伯数字，教育风格，完全左对齐 */
+    .sidebar .sidebar-nav ul > li > ul > li > a {
+      font-weight: 600;
+      font-size: 1em;
+      color: var(--text-secondary);
+      border-left-color: var(--accent-color);
+      padding-left: 10px !important;
+      border-left-width: 3px;
+    }
+    .sidebar .sidebar-nav ul > li > ul > li > a:hover {
+      background: rgba(6, 182, 212, 0.05);
+      color: var(--primary-color);
+      transform: translateX(2px);
+    }
+    /* 三级目录 - 阿拉伯数字，浅色，完全左对齐 */
+    .sidebar .sidebar-nav ul > li > ul > li > ul > li > a {
+      font-weight: 500;
+      font-size: 0.95em;
+      color: #64748b;
+      border-left-color: #cbd5e1;
+      padding-left: 10px !important;
+      border-left-width: 2px;
+    }
+    .sidebar .sidebar-nav ul > li > ul > li > ul > li > a:hover {
+      background: rgba(203, 213, 225, 0.1);
+      color: var(--text-secondary);
+      transform: translateX(2px);
+    }
+    /* 四级及更深目录，完全左对齐 */
+    .sidebar .sidebar-nav ul > li > ul > li > ul > li > ul > li > a {
+      font-weight: normal;
+      font-size: 0.9em;
+      color: #94a3b8;
+      border-left-color: #e2e8f0;
+      padding-left: 10px !important;
+      border-left-width: 2px;
+    }
+    /* 当前激活的链接 - 科技风格高亮 */
+    .sidebar a.active {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%) !important;
+      color: var(--primary-color) !important;
+      border-left-color: var(--primary-color) !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+    }
+    
+    /* 调整主内容区域，为更宽的侧边栏留出空间 */
+    .content {
+      margin-left: var(--sidebar-width) !important;
+      transition: margin-left 0.3s ease, max-width 0.3s ease;
+      background: #f9fbff !important;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+    
+    /* 侧边栏隐藏时，内容居中显示 */
+    body.sidebar-hidden .content {
+      margin-left: 0 !important;
+      max-width: 1200px !important;
+      margin-right: auto !important;
+      margin-left: auto !important;
+    }
+    
+    /* 首页时内容区域背景透明，让背景显示 */
+    .content:has(.homepage-doodle-bg) {
+      background: transparent !important;
+    }
+    
+    /* 内容区域背景（非首页保持白色） */
+    .markdown-section {
+      background: #ffffff !important;
+      padding: 40px 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    /* 首页动态涂鸦风格背景 - 覆盖整个内容区域 */
+    .markdown-section.homepage-doodle-bg {
+      background: 
+        /* 涂鸦风格的点状图案 */
+        radial-gradient(circle at 15% 25%, rgba(37, 99, 235, 0.08) 2px, transparent 2px),
+        radial-gradient(circle at 35% 45%, rgba(124, 58, 237, 0.06) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 55% 65%, rgba(6, 182, 212, 0.07) 2px, transparent 2px),
+        radial-gradient(circle at 75% 35%, rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 85% 75%, rgba(124, 58, 237, 0.06) 1.5px, transparent 1.5px),
+        /* 涂鸦风格的线条 */
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 8px,
+          rgba(37, 99, 235, 0.03) 8px,
+          rgba(37, 99, 235, 0.03) 10px
+        ),
+        repeating-linear-gradient(
+          -30deg,
+          transparent,
+          transparent 12px,
+          rgba(124, 58, 237, 0.02) 12px,
+          rgba(124, 58, 237, 0.02) 14px
+        ),
+        /* 基础浅色背景 */
+        linear-gradient(135deg, #fefefe 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+      background-size: 
+        180px 180px,
+        220px 220px,
+        200px 200px,
+        160px 160px,
+        240px 240px,
+        250px 250px,
+        300px 300px,
+        100% 100%;
+      background-position: 
+        0 0,
+        50px 50px,
+        100px 100px,
+        150px 30px,
+        200px 150px,
+        0 0,
+        80px 80px,
+        0 0;
+      animation: doodleHomeBackground 25s ease-in-out infinite;
+      background-attachment: fixed;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    
+    /* 确保首页背景覆盖整个页面 */
+    .content:has(.homepage-doodle-bg) {
+      background: transparent !important;
+    }
+    
+    @keyframes doodleHomeBackground {
+      0%, 100% {
+        background-position: 
+          0 0,
+          50px 50px,
+          100px 100px,
+          150px 30px,
+          200px 150px,
+          0 0,
+          80px 80px,
+          0 0;
+      }
+      33% {
+        background-position: 
+          30px 20px,
+          80px 70px,
+          130px 120px,
+          180px 50px,
+          230px 170px,
+          20px 15px,
+          110px 100px,
+          0 0;
+      }
+      66% {
+        background-position: 
+          20px 40px,
+          70px 90px,
+          120px 140px,
+          170px 70px,
+          220px 190px,
+          15px 25px,
+          100px 120px,
+          0 0;
+      }
+    }
+    
+    /* 确保文字内容在白色背景上，左对齐 */
+    .markdown-section p,
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3,
+    .markdown-section h4,
+    .markdown-section h5,
+    .markdown-section h6,
+    .markdown-section ul,
+    .markdown-section ol,
+    .markdown-section li,
+    .markdown-section blockquote,
+    .markdown-section code,
+    .markdown-section pre,
+    .markdown-section table {
+      background: transparent !important;
+      color: var(--text-primary);
+      text-align: left;
+    }
+    
+    /* 标题样式增强 - 去掉下划线 */
+    .markdown-section h1 {
+      border-bottom: 3px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      font-weight: 700;
+      position: relative;
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h1::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+      z-index: 1;
+    }
+    
+    .markdown-section h2 {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 15px;
+      margin-top: 30px;
+      color: var(--text-primary);
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h2:hover {
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h3 {
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h3:hover {
+      text-decoration: none !important;
+    }
+    
+    /* 去掉所有标题的悬停下划线 - 更强制性的样式 */
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3,
+    .markdown-section h4,
+    .markdown-section h5,
+    .markdown-section h6 {
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h1:hover,
+    .markdown-section h2:hover,
+    .markdown-section h3:hover,
+    .markdown-section h4:hover,
+    .markdown-section h5:hover,
+    .markdown-section h6:hover {
+      text-decoration: none !important;
+      border-bottom: none !important;
+    }
+    
+    /* 确保标题链接也没有下划线 */
+    .markdown-section h1 a,
+    .markdown-section h2 a,
+    .markdown-section h3 a,
+    .markdown-section h4 a,
+    .markdown-section h5 a,
+    .markdown-section h6 a {
+      text-decoration: none !important;
+    }
+    
+    .markdown-section h1 a:hover,
+    .markdown-section h2 a:hover,
+    .markdown-section h3 a:hover,
+    .markdown-section h4 a:hover,
+    .markdown-section h5 a:hover,
+    .markdown-section h6 a:hover {
+      text-decoration: none !important;
+    }
+    
+    /* 概览页面特殊样式 */
+    .markdown-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      animation: fadeInUp 1s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* 卡片样式 */
+    .markdown-section div[style*="background"] {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .markdown-section div[style*="background"]:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+    }
+    
+    /* 按钮链接样式 */
+    .markdown-section a[style*="gradient"] {
+      transition: all 0.3s;
+    }
+    
+    .markdown-section a[style*="gradient"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5) !important;
+    }
+    
+    /* 代码块保持原有样式但背景透明 */
+    .markdown-section pre {
+      background: #f8f9fa !important;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    /* 侧边栏背景渐变 */
+    .sidebar {
+      background: linear-gradient(180deg, #f7f9fc 0%, #eef4ff 100%) !important;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      border-right: 1px solid #e2e8f0;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+      }
+      .sidebar-resizer {
+        display: none;
+      }
+      .content {
+        margin-left: 0 !important;
+      }
+    }
+    /* Notebook 链接样式 - 增强版 */
+    .notebook-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 24px;
+      margin: 10px 6px;
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      color: white !important;
+      text-decoration: none !important;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1em;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+    }
+    
+    .notebook-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .notebook-link:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+      color: white !important;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .notebook-link:hover::before {
+      left: 100%;
+    }
+    
+    .notebook-link:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    
+    /* 列表中的 Notebook 链接 */
+    ul .notebook-link,
+    ol .notebook-link {
+      display: inline-flex;
+      margin: 8px 4px;
+    }
+    
+    /* 代码块中的链接样式 */
+    code a.notebook-link {
+      display: inline-flex;
+      padding: 6px 12px;
+      margin: 4px 2px;
+      font-size: 0.85em;
+    }
+    
+    /* 段落中的 Notebook 链接 */
+    p .notebook-link {
+      display: inline-flex;
+      vertical-align: middle;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .notebook-link {
+        padding: 10px 18px;
+        font-size: 0.9em;
+        margin: 8px 4px;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <div id="app"></div>
   <script>
-    window.$docsify = {
-      name: 'AI for Beginners',
-      repo: 'https://github.com/Microsoft/AI-For-Beginners',
-      relativePath: true,
-      auto2top: true,
-      routerMode: 'history'
+    // 侧边栏拖动调整宽度功能（全局函数）
+    let isDragging = false;
+    let startX = 0;
+    let startWidth = 0;
+    let resizer = null;
+    
+    function initSidebarResizer() {
+      const sidebar = document.querySelector('.sidebar');
+      if (!sidebar) {
+        return;
+      }
+      
+      // 检查是否已经创建了拖动条
+      if (sidebar.querySelector('.sidebar-resizer')) {
+        return;
+      }
+      
+      // 确保侧边栏有相对定位
+      const sidebarStyle = window.getComputedStyle(sidebar);
+      if (sidebarStyle.position === 'static') {
+        sidebar.style.position = 'relative';
+      }
+      
+      // 创建拖动条
+      resizer = document.createElement('div');
+      resizer.className = 'sidebar-resizer';
+      resizer.setAttribute('title', '拖动调整侧边栏宽度');
+      sidebar.appendChild(resizer);
+      
+      // 从 localStorage 恢复宽度
+      const savedWidth = localStorage.getItem('sidebar-width');
+      if (savedWidth) {
+        document.documentElement.style.setProperty('--sidebar-width', savedWidth + 'px');
+      }
+      
+      // 鼠标按下事件
+      resizer.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.clientX;
+        startWidth = parseInt(window.getComputedStyle(sidebar).width, 10);
+        resizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      
+      // 鼠标移动事件
+      const handleMouseMove = function(e) {
+        if (!isDragging) return;
+        
+        const diff = e.clientX - startX;
+        let newWidth = startWidth + diff;
+        
+        // 限制最小和最大宽度
+        newWidth = Math.max(300, Math.min(600, newWidth));
+        
+        document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
+        
+        // 保存到 localStorage
+        localStorage.setItem('sidebar-width', newWidth);
+        
+        e.preventDefault();
+      };
+      
+      document.addEventListener('mousemove', handleMouseMove);
+      
+      // 鼠标释放事件
+      const handleMouseUp = function() {
+        if (isDragging) {
+          isDragging = false;
+          if (resizer) {
+            resizer.classList.remove('dragging');
+          }
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        }
+      };
+      
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      console.log('侧边栏拖动功能已初始化');
     }
+    
+    // Docsify 配置
+    window.$docsify = {
+      name: '人工智能入门',
+      // 设置根目录为 lessons_zh
+      loadSidebar: '_sidebar.md',  // 明确指定侧边栏文件
+      subMaxLevel: 3,
+      relativePath: true,  // 使用相对路径（hash 模式推荐）
+      auto2top: true,
+      routerMode: 'hash',  // 使用 hash 模式
+      collapseSidebar: true,  // 启用侧边栏折叠
+      // 设置主页为 lessons_zh/README（使用绝对路径）
+      homepage: '/lessons_zh/README',
+      coverpage: false,  // 禁用封面页
+      // Jupyter Lab 配置
+      jupyterUrl: 'http://localhost:8888',  // Jupyter 服务器地址
+      jupyterMode: 'lab',  // 'lab' 或 'notebook'，默认使用 Jupyter Lab
+      jupyterToken: '',  // Jupyter token（可选，如果为空则尝试自动获取）
+      // 插件：自动转换 .ipynb 链接和修复图片路径
+      plugins: [
+        function(hook, vm) {
+          // 路径标准化函数
+          function normalizeNotebookPath(href, currentPath) {
+            let notebookPath = href;
+            
+            // 如果已经是完整 URL，直接返回
+            if (notebookPath.startsWith('http://') || notebookPath.startsWith('https://')) {
+              return notebookPath;
+            }
+            
+            // 获取当前页面的目录路径（移除文件名）
+            let pathParts = currentPath.split('/').filter(p => p);
+            // 移除最后的文件名（README 或 README.md）
+            if (pathParts.length > 0 && (pathParts[pathParts.length - 1] === 'README' || pathParts[pathParts.length - 1].endsWith('.md'))) {
+              pathParts.pop();
+            }
+            const currentDir = pathParts.join('/');
+            
+            // 处理绝对路径（以 / 开头）
+            if (notebookPath.startsWith('/')) {
+              // 移除前导斜杠，保留 lessons_zh/ 前缀
+              notebookPath = notebookPath.substring(1);
+              if (!notebookPath.startsWith('lessons_zh/')) {
+                notebookPath = 'lessons_zh/' + notebookPath;
+              }
+              return notebookPath;
+            }
+            
+            // 处理相对路径（以 ./ 开头）
+            if (notebookPath.startsWith('./')) {
+              notebookPath = notebookPath.substring(2);
+              if (currentDir) {
+                return currentDir + '/' + notebookPath;
+              }
+              return notebookPath;
+            }
+            
+            // 处理父目录路径（以 ../ 开头）
+            if (notebookPath.startsWith('../')) {
+              const pathParts = currentDir.split('/').filter(p => p && p !== 'lessons_zh');
+              const notebookParts = notebookPath.split('/').filter(p => p);
+              
+              // 处理每个 ../
+              for (let part of notebookParts) {
+                if (part === '..') {
+                  if (pathParts.length > 0) {
+                    pathParts.pop();
+                  }
+                } else {
+                  pathParts.push(part);
+                }
+              }
+              
+              // 确保以 lessons_zh/ 开头
+              const result = pathParts.join('/');
+              if (!result.startsWith('lessons_zh/')) {
+                return 'lessons_zh/' + result;
+              }
+              return result;
+            }
+            
+            // 普通相对路径（无前缀）
+            if (currentDir) {
+              return currentDir + '/' + notebookPath;
+            }
+            
+            return notebookPath;
+          }
+          
+          // 自动从 Jupyter API 获取 token
+          async function fetchJupyterToken(baseUrl) {
+            try {
+              // 尝试从 Jupyter API 获取 token
+              // 注意：这需要 Jupyter 服务器允许 CORS，或者通过代理
+              const response = await fetch(`${baseUrl}/api/authorizations/token`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                mode: 'cors'
+              });
+              
+              if (response.ok) {
+                const data = await response.json();
+                if (data.token) {
+                  localStorage.setItem('jupyter_token', data.token);
+                  return data.token;
+                }
+              }
+            } catch (error) {
+              // API 调用失败，尝试其他方法
+              console.debug('无法从 API 获取 token，尝试其他方法...');
+            }
+            
+            return null;
+          }
+          
+          // 从 Jupyter 服务器列表页面获取 token（通过解析页面）
+          async function extractTokenFromPage(baseUrl) {
+            try {
+              // 尝试访问 Jupyter 主页，可能会重定向到带 token 的 URL
+              const response = await fetch(baseUrl, {
+                method: 'GET',
+                credentials: 'include',
+                redirect: 'manual'
+              });
+              
+              // 检查 Location 头中的 token
+              const location = response.headers.get('Location');
+              if (location) {
+                const tokenMatch = location.match(/[?&]token=([^&]+)/);
+                if (tokenMatch) {
+                  const token = tokenMatch[1];
+                  localStorage.setItem('jupyter_token', token);
+                  return token;
+                }
+              }
+            } catch (error) {
+              console.debug('无法从页面提取 token');
+            }
+            
+            return null;
+          }
+          
+          // 从本地 token 服务获取 token
+          async function fetchTokenFromLocalService() {
+            try {
+              const response = await fetch('http://127.0.0.1:8765/token', {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache'
+              });
+              
+              if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.token) {
+                  localStorage.setItem('jupyter_token', data.token);
+                  return data.token;
+                }
+              }
+            } catch (error) {
+              // 本地服务未运行，这是正常的
+              console.debug('本地 token 服务未运行（这是正常的，如果已配置 token 则无需运行）');
+            }
+            return null;
+          }
+          
+          // 获取 Jupyter token（从多个来源尝试）
+          async function getJupyterToken(config) {
+            const baseUrl = config.jupyterUrl || 'http://localhost:8888';
+            
+            // 首先检查配置中的 token
+            if (config.jupyterToken) {
+              return config.jupyterToken;
+            }
+            
+            // 检查 localStorage 中是否保存了 token
+            const savedToken = localStorage.getItem('jupyter_token');
+            if (savedToken) {
+              return savedToken;
+            }
+            
+            // 尝试从本地 token 服务获取（最方便的方式）
+            const localToken = await fetchTokenFromLocalService();
+            if (localToken) {
+              return localToken;
+            }
+            
+            // 尝试从当前 URL 中提取 token（如果用户已经登录过）
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlToken = urlParams.get('token');
+            if (urlToken) {
+              localStorage.setItem('jupyter_token', urlToken);
+              return urlToken;
+            }
+            
+            // 尝试自动获取 token（异步，不阻塞）
+            // 注意：由于 CORS 限制，这可能不会成功，但值得尝试
+            fetchJupyterToken(baseUrl).then(token => {
+              if (token) {
+                console.log('✅ 自动获取 Jupyter token 成功');
+              }
+            }).catch(() => {});
+            
+            extractTokenFromPage(baseUrl).then(token => {
+              if (token) {
+                console.log('✅ 从页面提取 Jupyter token 成功');
+              }
+            }).catch(() => {});
+            
+            return null;
+          }
+          
+          // 构建 Jupyter URL（同步版本，使用已缓存的 token）
+          function buildJupyterUrl(notebookPath, config) {
+            const baseUrl = config.jupyterUrl || 'http://localhost:8888';
+            const mode = config.jupyterMode || 'lab';
+            
+            // 获取 token（优先从配置，然后从 localStorage）
+            let token = config.jupyterToken || localStorage.getItem('jupyter_token');
+            
+            // 确保路径是正确的格式（移除前导斜杠，如果有的话）
+            let cleanPath = notebookPath;
+            if (cleanPath.startsWith('/')) {
+              cleanPath = cleanPath.substring(1);
+            }
+            
+            // Jupyter Lab 直接打开文件的 URL 格式
+            // 使用 /lab/tree/ 而不是 /lab/workspaces/，这样可以直接打开文件
+            let url;
+            if (mode === 'lab') {
+              // Jupyter Lab: /lab/tree/path/to/notebook.ipynb 会直接打开文件
+              url = `${baseUrl}/lab/tree/${cleanPath}`;
+            } else {
+              // Jupyter Notebook 经典界面
+              url = `${baseUrl}/notebooks/${cleanPath}`;
+            }
+            
+            // 如果存在 token 则添加到查询参数中
+            if (token) {
+              const separator = url.includes('?') ? '&' : '?';
+              url = `${url}${separator}token=${token}`;
+            }
+            
+            return url;
+          }
+          
+          // 页面加载时自动获取 token（异步，不阻塞页面渲染）
+          async function autoFetchToken() {
+            const config = window.$docsify || {};
+            
+            // 如果已有 token，不需要获取
+            if (config.jupyterToken || localStorage.getItem('jupyter_token')) {
+              return;
+            }
+            
+            // 尝试从本地服务获取 token
+            try {
+              const token = await fetchTokenFromLocalService();
+              if (token) {
+                console.log('✅ 已自动获取 Jupyter token');
+                // 触发页面更新（如果有链接需要刷新）
+                if (window.$docsify) {
+                  window.$docsify.jupyterToken = token;
+                }
+              }
+            } catch (error) {
+              // 静默失败，不影响页面使用
+            }
+          }
+          
+          hook.afterEach(function(html) {
+            // 获取配置
+            const config = {
+              jupyterUrl: window.$docsify.jupyterUrl || 'http://localhost:8888',
+              jupyterMode: window.$docsify.jupyterMode || 'lab',
+              jupyterToken: window.$docsify.jupyterToken || ''
+            };
+            
+            // 获取当前页面路径
+            const currentPath = vm.route.path || '';
+            
+            // 将 .ipynb 链接转换为 Jupyter Lab 链接
+            html = html.replace(
+              /<a\s+href=["']([^"']+\.ipynb)["']([^>]*)>([^<]+)<\/a>/gi,
+              function(match, href, attrs, text) {
+                // 标准化路径
+                const notebookPath = normalizeNotebookPath(href, currentPath);
+                
+                // 构建 Jupyter URL（初始可能没有 token）
+                const jupyterUrl = buildJupyterUrl(notebookPath, config);
+                
+                // 返回新的链接，添加 notebook-link 类和 target="_blank"
+                // 移除原有的 class 属性（如果有），添加我们的样式类
+                // 添加 data-notebook-path 属性，用于点击时动态获取 token
+                const cleanAttrs = attrs.replace(/\s*class=["'][^"']*["']/gi, '');
+                return `<a href="${jupyterUrl}" target="_blank" class="notebook-link" data-notebook-path="${notebookPath}" ${cleanAttrs}>📓 ${text}</a>`;
+              }
+            );
+            
+            // 修复图片路径 - 将相对路径转换为绝对路径
+            html = html.replace(
+              /<img([^>]*)\ssrc=["']([^"']+)["']([^>]*)>/gi,
+              function(match, before, src, after) {
+                // 如果已经是绝对路径或完整URL，不处理
+                if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('//') || src.startsWith('/lessons_zh/')) {
+                  return match;
+                }
+                
+                // 获取当前页面路径
+                const currentPath = vm.route.path;
+                let imagePath = src;
+                
+                // 处理相对路径
+                if (imagePath.startsWith('./')) {
+                  imagePath = imagePath.substring(2);
+                }
+                
+                // 如果路径以 ../ 开头，需要计算相对路径
+                if (imagePath.startsWith('../')) {
+                  // 计算相对于当前文件的路径
+                  const pathParts = currentPath.split('/').filter(p => p);
+                  const imageParts = imagePath.split('/').filter(p => p);
+                  
+                  // 移除文件名
+                  pathParts.pop();
+                  
+                  // 处理 ../
+                  for (let part of imageParts) {
+                    if (part === '..') {
+                      pathParts.pop();
+                    } else {
+                      pathParts.push(part);
+                    }
+                  }
+                  
+                  imagePath = '/lessons_zh/' + pathParts.join('/');
+                } else if (!imagePath.startsWith('/')) {
+                  // 相对路径，需要基于当前文件路径
+                  const pathParts = currentPath.split('/').filter(p => p);
+                  pathParts.pop(); // 移除文件名
+                  if (pathParts.length > 0) {
+                    imagePath = '/lessons_zh/' + pathParts.join('/') + '/' + imagePath;
+                  } else {
+                    imagePath = '/lessons_zh/' + imagePath;
+                  }
+                }
+                
+                return `<img${before} src="${imagePath}"${after}>`;
+              }
+            );
+            
+            return html;
+          });
+          
+          // 监听路由变化，初始化拖动功能
+          hook.doneEach(function() {
+            setTimeout(function() {
+              if (typeof initSidebarResizer === 'function') {
+                initSidebarResizer();
+              }
+              
+              // 处理首页目录的展开/折叠逻辑
+              handleHomepageSidebar();
+              
+              // 检测是否是首页，添加涂鸦背景
+              const currentPath = window.location.hash || window.location.pathname;
+              const isHomepage = !currentPath || 
+                                 currentPath === '#' || 
+                                 currentPath === '#/' || 
+                                 currentPath.includes('lessons_zh/README') ||
+                                 currentPath.includes('/lessons_zh/README');
+              
+              // 多次尝试查找 markdown-section，因为 Docsify 可能还在渲染
+              function applyHomepageBg() {
+                const markdownSection = document.querySelector('.markdown-section');
+                if (markdownSection) {
+                  if (isHomepage) {
+                    markdownSection.classList.add('homepage-doodle-bg');
+                    // 强制应用背景样式
+                    markdownSection.style.background = '';
+                  } else {
+                    markdownSection.classList.remove('homepage-doodle-bg');
+                  }
+                } else {
+                  // 如果还没找到，延迟重试
+                  setTimeout(applyHomepageBg, 100);
+                }
+              }
+              applyHomepageBg();
+            }, 300);
+          });
+          
+          // 页面加载完成后处理首页目录
+          hook.mounted(function() {
+            setTimeout(function() {
+              handleHomepageSidebar();
+            }, 800);
+          });
+          
+          // 路由变化时也处理
+          hook.afterEach(function() {
+            setTimeout(function() {
+              handleHomepageSidebar();
+              initSidebarCollapse();  // 初始化目录折叠功能
+              handleSidebarToggle();  // 处理侧边栏显示/隐藏
+            }, 300);
+          });
+          
+          // 页面加载完成后初始化
+          hook.mounted(function() {
+            setTimeout(function() {
+              initSidebarCollapse();  // 初始化目录折叠功能
+              handleSidebarToggle();  // 处理侧边栏显示/隐藏
+            }, 1000);
+          });
+        }
+      ]
+    };
+    
+    // 处理首页目录的展开/折叠逻辑
+    function handleHomepageSidebar() {
+      const currentPath = window.location.hash || window.location.pathname;
+      const isHomepage = !currentPath || 
+                         currentPath === '#' || 
+                         currentPath === '#/' || 
+                         currentPath.includes('lessons_zh/README') ||
+                         currentPath.includes('/lessons_zh/README');
+      
+      // 检查是否是首次访问首页
+      const isFirstVisit = !sessionStorage.getItem('hasVisitedHomepage');
+      
+      function processSidebar() {
+        const firstSidebarItem = document.querySelector('.sidebar .sidebar-nav ul > li:first-child');
+        if (!firstSidebarItem) {
+          // 如果侧边栏还没加载，延迟重试
+          setTimeout(processSidebar, 200);
+          return;
+        }
+        
+        const firstSubmenu = firstSidebarItem.querySelector('ul');
+        if (!firstSubmenu) return;
+        
+        if (isFirstVisit && isHomepage) {
+          // 首次进入首页，折叠首页目录
+          firstSubmenu.style.display = 'none';
+          sessionStorage.setItem('homepageCollapsed', 'true');
+        } else {
+          // 不是首次访问或不在首页，展开首页目录
+          if (sessionStorage.getItem('homepageCollapsed') === 'true') {
+            firstSubmenu.style.display = 'block';
+            sessionStorage.removeItem('homepageCollapsed');
+          }
+        }
+        
+        // 监听首页链接点击（使用事件委托避免重复绑定）
+        const homepageLink = firstSidebarItem.querySelector('a');
+        if (homepageLink && !homepageLink.dataset.listenerAdded) {
+          homepageLink.dataset.listenerAdded = 'true';
+          homepageLink.addEventListener('click', function() {
+            // 点击首页链接后，展开目录并标记已访问
+            const submenu = firstSidebarItem.querySelector('ul');
+            if (submenu) {
+              submenu.style.display = 'block';
+            }
+            sessionStorage.setItem('hasVisitedHomepage', 'true');
+            sessionStorage.removeItem('homepageCollapsed');
+          });
+        }
+      }
+      
+      processSidebar();
+      
+      // 监听路由变化，如果跳转到其他页面，标记已访问
+      if (!isHomepage) {
+        sessionStorage.setItem('hasVisitedHomepage', 'true');
+        sessionStorage.removeItem('homepageCollapsed');
+      }
+    }
+    
+    // 应用首页背景的函数
+    function applyHomepageBackground() {
+      const currentPath = window.location.hash || window.location.pathname;
+      const isHomepage = !currentPath || 
+                         currentPath === '#' || 
+                         currentPath === '#/' || 
+                         currentPath.includes('lessons_zh/README') ||
+                         currentPath.includes('/lessons_zh/README');
+      
+      function tryApply() {
+        const markdownSection = document.querySelector('.markdown-section');
+        if (markdownSection) {
+          if (isHomepage) {
+            markdownSection.classList.add('homepage-doodle-bg');
+          } else {
+            markdownSection.classList.remove('homepage-doodle-bg');
+          }
+        } else {
+          setTimeout(tryApply, 100);
+        }
+      }
+      tryApply();
+    }
+    
+    // 初始化目录折叠功能 - 点击目录标题展开/收起子目录
+    function initSidebarCollapse() {
+      const sidebar = document.querySelector('.sidebar');
+      if (!sidebar) {
+        setTimeout(initSidebarCollapse, 200);
+        return;
+      }
+      
+      // 找到所有有子目录的一级目录项
+      const parentItems = sidebar.querySelectorAll('.sidebar-nav ul > li:has(ul)');
+      
+      parentItems.forEach(function(item) {
+        const parentLink = item.querySelector('> a');
+        const submenu = item.querySelector('> ul');
+        
+        if (!parentLink || !submenu) {
+          // 如果没有子目录，标记为无子目录
+          if (parentLink) {
+            parentLink.classList.add('no-children');
+          }
+          return;
+        }
+        
+        // 检查是否已经添加了事件监听器
+        if (parentLink.dataset.collapseInitialized === 'true') {
+          return;
+        }
+        
+        parentLink.dataset.collapseInitialized = 'true';
+        
+        // 检查是否应该默认折叠（首次访问首页的情况）
+        const isFirstItem = item === parentItems[0];
+        const isHomepageCollapsed = isFirstItem && sessionStorage.getItem('homepageCollapsed') === 'true';
+        
+        if (isHomepageCollapsed) {
+          submenu.classList.add('collapsed');
+          parentLink.classList.add('collapsed');
+        }
+        
+        // 点击事件：切换折叠/展开
+        parentLink.addEventListener('click', function(e) {
+          // 如果点击的是链接内的文本或图标，切换折叠状态
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // 切换折叠状态
+          const isCollapsed = submenu.classList.contains('collapsed');
+          
+          if (isCollapsed) {
+            submenu.classList.remove('collapsed');
+            parentLink.classList.remove('collapsed');
+          } else {
+            submenu.classList.add('collapsed');
+            parentLink.classList.add('collapsed');
+          }
+          
+          // 如果是首页的第一项，更新 sessionStorage
+          if (isFirstItem) {
+            if (submenu.classList.contains('collapsed')) {
+              sessionStorage.setItem('homepageCollapsed', 'true');
+            } else {
+              sessionStorage.removeItem('homepageCollapsed');
+            }
+          }
+        });
+      });
+      
+      // 处理没有子目录的链接（正常跳转）
+      const noChildItems = sidebar.querySelectorAll('.sidebar-nav ul > li:not(:has(ul)) > a');
+      noChildItems.forEach(function(link) {
+        link.classList.add('no-children');
+      });
+    }
+    
+    // 处理侧边栏显示/隐藏时内容居中
+    function handleSidebarToggle() {
+      const sidebar = document.querySelector('.sidebar');
+      const content = document.querySelector('.content');
+      const toggleBtn = document.querySelector('.sidebar-toggle');
+      
+      if (!sidebar || !content) {
+        setTimeout(handleSidebarToggle, 200);
+        return;
+      }
+      
+      // 监听侧边栏显示状态变化
+      function updateContentLayout() {
+        const sidebarStyle = window.getComputedStyle(sidebar);
+        const sidebarVisible = sidebarStyle.display !== 'none' && sidebar.offsetWidth > 0;
+        
+        if (sidebarVisible) {
+          // 侧边栏显示，内容靠右
+          content.style.marginLeft = '';
+          content.style.maxWidth = '';
+          content.style.marginRight = '';
+          document.body.classList.remove('sidebar-hidden');
+        } else {
+          // 侧边栏隐藏，内容居中
+          content.style.marginLeft = '0';
+          content.style.maxWidth = '1200px';
+          content.style.marginRight = 'auto';
+          document.body.classList.add('sidebar-hidden');
+        }
+      }
+      
+      // 监听侧边栏切换按钮
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+          setTimeout(updateContentLayout, 100);
+        });
+      }
+      
+      // 使用 MutationObserver 监听侧边栏显示状态
+      const observer = new MutationObserver(function(mutations) {
+        updateContentLayout();
+      });
+      
+      observer.observe(sidebar, {
+        attributes: true,
+        attributeFilter: ['style', 'class'],
+        childList: false,
+        subtree: false
+      });
+      
+      // 监听窗口大小变化
+      window.addEventListener('resize', updateContentLayout);
+      
+      // 初始检查
+      updateContentLayout();
+    }
+    
+    // 等待页面加载完成后初始化所有功能
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initSidebarResizer, 1000);
+        setTimeout(handleHomepageSidebar, 1500);
+        setTimeout(applyHomepageBackground, 1000);
+        setTimeout(initSidebarCollapse, 1500);
+        setTimeout(handleSidebarToggle, 1500);
+      });
+    } else {
+      setTimeout(initSidebarResizer, 1000);
+      setTimeout(handleHomepageSidebar, 1500);
+      setTimeout(applyHomepageBackground, 1000);
+      setTimeout(initSidebarCollapse, 1500);
+      setTimeout(handleSidebarToggle, 1500);
+    }
+    
+    // 监听 hash 变化，应用首页背景和重新初始化
+    window.addEventListener('hashchange', function() {
+      setTimeout(applyHomepageBackground, 300);
+      setTimeout(initSidebarCollapse, 500);
+      setTimeout(handleSidebarToggle, 500);
+    });
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script>
+    // 确保默认加载中文内容
+    (function() {
+      // 在页面加载时检查路由
+      const currentHash = window.location.hash;
+      
+      // 如果访问根路径且没有 hash 或 hash 为空，设置默认路由
+      if (!currentHash || currentHash === '#' || currentHash === '#/') {
+        // 直接设置 hash，让 Docsify 处理（使用绝对路径）
+        window.location.hash = '#/lessons_zh/README';
+      }
+    })();
+    
+    // Jupyter Token 自动获取功能
+    (function() {
+      // 自动获取 token 的函数
+      async function fetchTokenNow() {
+        try {
+          const response = await fetch('http://127.0.0.1:8765/token', {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache'
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.token) {
+              localStorage.setItem('jupyter_token', data.token);
+              if (window.$docsify) {
+                window.$docsify.jupyterToken = data.token;
+              }
+              return data.token;
+            }
+          }
+        } catch (error) {
+          // 本地服务未运行，这是正常的
+        }
+        return null;
+      }
+      
+      // 等待页面加载完成后自动获取 token
+      window.addEventListener('load', function() {
+        // 延迟执行，确保 Docsify 已初始化
+        setTimeout(async function() {
+          const config = window.$docsify || {};
+          const savedToken = localStorage.getItem('jupyter_token');
+          const configToken = config.jupyterToken || '';
+          
+          // 如果既没有配置 token，也没有保存的 token，尝试自动获取
+          if (!configToken && !savedToken) {
+            const token = await fetchTokenNow();
+            if (token) {
+              console.log('%c✅ 已自动获取 Jupyter token，现在可以直接点击 Notebook 链接了！', 'color: #10b981; font-size: 12px; font-weight: bold;');
+            } else {
+              // 本地服务未运行，显示提示
+              if (!sessionStorage.getItem('jupyter_token_prompt_shown')) {
+                console.log('%c💡 提示：启动 token 服务可自动获取 Jupyter token', 'color: #2563eb; font-size: 12px; font-weight: bold;');
+                console.log('%c   运行: python3 jupyter_token_server.py', 'color: #64748b; font-size: 11px;');
+                console.log('%c   或者: ./setup_jupyter_token.sh 手动获取 token', 'color: #64748b; font-size: 11px;');
+                sessionStorage.setItem('jupyter_token_prompt_shown', 'true');
+              }
+            }
+          }
+        }, 1000);
+      });
+      
+      // 监听所有 notebook 链接的点击事件，动态添加 token
+      document.addEventListener('click', async function(e) {
+        const link = e.target.closest('a.notebook-link');
+        if (!link) return;
+        
+        const notebookPath = link.getAttribute('data-notebook-path');
+        if (!notebookPath) return;
+        
+        // 检查 URL 中是否已有 token
+        const currentUrl = link.getAttribute('href') || link.href;
+        if (currentUrl.includes('token=')) {
+          return; // 已有 token，不需要处理，让浏览器正常跳转
+        }
+        
+        // 阻止默认行为
+        e.preventDefault();
+        
+        // 获取 token（优先从 localStorage，如果没有则从服务获取）
+        let token = localStorage.getItem('jupyter_token') || window.$docsify?.jupyterToken;
+        
+        if (!token) {
+          // 尝试从服务获取
+          token = await fetchTokenNow();
+        }
+        
+        // 构建新的 URL
+        const config = window.$docsify || {};
+        const baseUrl = config.jupyterUrl || 'http://localhost:8888';
+        const mode = config.jupyterMode || 'lab';
+        
+        // 确保路径是正确的格式（移除前导斜杠，如果有的话）
+        let cleanPath = notebookPath;
+        if (cleanPath.startsWith('/')) {
+          cleanPath = cleanPath.substring(1);
+        }
+        
+        let newUrl;
+        if (mode === 'lab') {
+          // Jupyter Lab 直接打开文件
+          newUrl = `${baseUrl}/lab/tree/${cleanPath}`;
+        } else {
+          // Jupyter Notebook 经典界面
+          newUrl = `${baseUrl}/notebooks/${cleanPath}`;
+        }
+        
+        if (token) {
+          newUrl += `?token=${token}`;
+        }
+        
+        // 打开新窗口
+        window.open(newUrl, '_blank');
+      }, true); // 使用捕获阶段，确保先执行
+    })();
+  </script>
 </body>
 
 </html>
